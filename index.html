@@ -1,0 +1,3026 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>鍵盤魔導師 Keyboard Mage — 【測試版 DEMO】</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@600;700;900&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   MUCHA / ART NOUVEAU THEME STYLING
+   ========================================================================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --mucha-bg: #1c1412;
+    --mucha-parchment: #f6eedb;
+    --mucha-parchment-deep: #ebd8b5;
+    --mucha-gold: #c59b4c;
+    --mucha-gold-light: #e8c97e;
+    --mucha-gold-dark: #825f23;
+    --mucha-bronze: #4e3621;
+    --mucha-rose: #b75e54;
+    --mucha-sage: #5f7a61;
+    --mucha-lapis: #2c4959;
+    --mucha-cyan: #38c8e8;
+    --mucha-terracotta: #a65839;
+    --mucha-ink: #22150f;
+}
+
+html, body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--mucha-bg);
+    color: var(--mucha-parchment);
+    font-family: 'Noto Serif TC', 'Cinzel', serif;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#app-container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    background: radial-gradient(circle at 50% 30%, #32221b 0%, #1c1310 70%, #120b09 100%);
+    box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.85);
+}
+
+/* ==========================================================================
+   TOP BAR: ART NOUVEAU BANNER
+   ========================================================================== */
+#header-bar {
+    flex: 0 0 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    background: linear-gradient(180deg, #2e1d16 0%, #20130d 100%);
+    border-bottom: 2px solid var(--mucha-gold);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.6);
+    position: relative;
+    z-index: 10;
+}
+
+#header-bar::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 5%, var(--mucha-gold-light) 50%, transparent 95%);
+}
+
+.brand-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Cinzel Decorative', 'Noto Serif TC', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--mucha-gold-light);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 0 12px rgba(232, 201, 126, 0.4);
+    letter-spacing: 1.5px;
+}
+
+.demo-tag {
+    background: #a63939;
+    border: 1px solid #ffd875;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
+}
+
+.stage-badge-tag {
+    font-size: 11px;
+    font-family: 'Cinzel', 'Noto Serif TC', serif;
+    background: #3e261a;
+    border: 1px solid var(--mucha-gold);
+    color: var(--mucha-gold-light);
+    padding: 1px 8px;
+    border-radius: 12px;
+    margin-left: 6px;
+    letter-spacing: 0.5px;
+}
+
+.hud-panel {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    color: var(--mucha-parchment);
+    letter-spacing: 0.5px;
+}
+
+.hud-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hud-label {
+    color: #bfa181;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+.hud-value {
+    color: #fff2d6;
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.hud-combo-highlight {
+    color: #ffd777;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+.hud-action-btn {
+    background: #342017;
+    border: 1px solid var(--mucha-gold);
+    color: var(--mucha-gold-light);
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Cinzel', 'Noto Serif TC', serif;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+.hud-action-btn:hover {
+    background: var(--mucha-gold);
+    color: var(--mucha-ink);
+}
+
+.settings-toggle-btn {
+    background: #342017;
+    border: 1px solid var(--mucha-gold);
+    color: var(--mucha-gold-light);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+.settings-toggle-btn:hover {
+    background: var(--mucha-gold);
+    color: var(--mucha-ink);
+    transform: rotate(30deg);
+}
+
+/* ==========================================================================
+   SETTINGS DROPDOWN (PARCHMENT CARD)
+   ========================================================================== */
+#settings-modal {
+    display: none;
+    position: absolute;
+    top: 54px;
+    right: 20px;
+    width: 290px;
+    background: #fbf5e8;
+    color: var(--mucha-ink);
+    border: 3px double var(--mucha-gold);
+    border-radius: 8px;
+    padding: 16px 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 25px rgba(197, 155, 76, 0.2);
+    z-index: 100;
+}
+
+#settings-modal.show {
+    display: block;
+    animation: fadeIn 0.2s ease-out;
+}
+
+#settings-modal h4 {
+    font-family: 'Cinzel Decorative', 'Noto Serif TC', serif;
+    color: var(--mucha-gold-dark);
+    font-size: 15px;
+    border-bottom: 1px solid #d4be9c;
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+.setting-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mucha-bronze);
+    cursor: pointer;
+}
+
+.setting-option input[type="checkbox"] {
+    accent-color: var(--mucha-gold-dark);
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   GAMEPLAY STAGE (FLEX FILL CANVAS)
+   ========================================================================== */
+#stage-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* ==========================================================================
+   DEMO EXCLUSIVE: IN-GAME STAGE SKIP BUTTON (BOTTOM-RIGHT)
+   ========================================================================== */
+#demo-skip-btn {
+    position: absolute;
+    bottom: 18px;
+    right: 22px;
+    background: linear-gradient(180deg, #382116 0%, #20110a 100%);
+    border: 2px solid var(--mucha-gold);
+    color: var(--mucha-gold-light);
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Cinzel', 'Noto Serif TC', serif;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7), 0 0 12px rgba(197, 155, 76, 0.4);
+    z-index: 80;
+    transition: all 0.2s ease;
+}
+
+#demo-skip-btn:hover {
+    background: var(--mucha-gold);
+    color: var(--mucha-ink);
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(232, 201, 126, 0.8);
+}
+
+#demo-skip-btn .skip-icon {
+    font-size: 14px;
+}
+
+/* ==========================================================================
+   BOTTOM TYPING GUIDE PANEL (ART NOUVEAU KEYBOARD & HANDS)
+   ========================================================================== */
+#guide-container {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(180deg, rgba(28, 17, 13, 0.96) 0%, rgba(18, 11, 8, 0.98) 100%);
+    border-top: 2px solid var(--mucha-gold);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.7);
+    padding: 6px 10px 8px;
+    position: relative;
+    z-index: 5;
+    transition: max-height 0.35s ease, opacity 0.35s ease, padding 0.35s ease;
+    max-height: 250px;
+}
+
+#guide-container.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding: 0;
+    border-top: none;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+#instruction-banner {
+    font-size: 13px;
+    color: var(--mucha-parchment);
+    margin-bottom: 5px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    font-family: 'Noto Serif TC', serif;
+    letter-spacing: 0.5px;
+}
+
+#instruction-banner .key-tag {
+    display: inline-block;
+    padding: 0 7px;
+    margin: 0 2px;
+    background: #472b1b;
+    border: 1px solid var(--mucha-gold);
+    border-radius: 4px;
+    color: var(--mucha-gold-light);
+    font-weight: 700;
+    font-family: 'Cinzel', serif;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+#instruction-banner .target-word {
+    color: var(--mucha-gold-light);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+#instruction-banner .lock-indicator {
+    color: #e5937a;
+    margin-right: 5px;
+}
+
+.guide-content-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    width: 100%;
+    max-width: 1140px;
+}
+
+#keyboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: center;
+}
+
+.kb-row {
+    display: flex;
+    gap: 3px;
+}
+
+.kb-key {
+    width: 35px;
+    height: 35px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', 'Noto Serif TC', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #2a1a12;
+    background: #e9ded0;
+    border: 1.5px solid #8f6c44;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -2px 0 rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.4);
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+.kb-key.space-bar {
+    width: 230px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #5d4233;
+}
+
+.kb-key.active-key {
+    background: #fffaee !important;
+    border-color: #ffd875 !important;
+    color: #4b2c0e !important;
+    transform: translateY(-2px) scale(1.14);
+    z-index: 10;
+    box-shadow: 0 0 16px rgba(232, 194, 94, 0.95), 0 0 26px rgba(246, 178, 62, 0.65), inset 0 0 6px #fff;
+}
+
+#hands-canvas {
+    width: 300px;
+    height: 115px;
+    border-radius: 8px;
+    background: rgba(36, 21, 15, 0.6);
+    border: 1px solid rgba(197, 155, 76, 0.4);
+    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.7);
+}
+
+/* ==========================================================================
+   DEMO EXCLUSIVE: STAGE NODE SELECTOR MODAL
+   ========================================================================== */
+#demo-stages-modal {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(12, 6, 4, 0.9);
+    backdrop-filter: blur(5px);
+    z-index: 280;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    animation: fadeIn 0.2s ease-out;
+}
+
+#demo-stages-modal.active {
+    display: flex;
+}
+
+.stage-selector-card {
+    width: 90%;
+    max-width: 820px;
+    background: #fbf5e8;
+    color: var(--mucha-ink);
+    border: 4px double var(--mucha-gold);
+    border-radius: 12px;
+    padding: 22px 26px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9), inset 0 0 35px rgba(197, 155, 76, 0.25);
+    position: relative;
+}
+
+.selector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #d4be9c;
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+}
+
+.selector-header h3 {
+    font-family: 'Cinzel Decorative', 'Noto Serif TC', serif;
+    font-size: 20px;
+    color: var(--mucha-gold-dark);
+}
+
+.selector-close-btn {
+    background: none;
+    border: 1px solid #997548;
+    color: #634324;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selector-close-btn:hover {
+    background: var(--mucha-gold);
+    color: #fff;
+}
+
+.stage-nodes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 12px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.stage-node-item {
+    background: #fffdf8;
+    border: 1.5px solid #c59b4c;
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.stage-node-item:hover {
+    background: #fff6db;
+    border-color: #996d18;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(197, 155, 76, 0.5);
+}
+
+.node-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.node-title {
+    font-family: 'Cinzel', 'Noto Serif TC', serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: #381f12;
+}
+
+.node-badge {
+    font-size: 11px;
+    background: #f2e2be;
+    color: #7b5220;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.node-desc {
+    font-size: 12px;
+    color: #6a492f;
+    line-height: 1.35;
+}
+
+/* ==========================================================================
+   ESC PAUSE MODAL (ART NOUVEAU PARCHMENT MENU)
+   ========================================================================== */
+#pause-modal {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(14, 8, 5, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: 250;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    animation: fadeIn 0.2s ease-out;
+}
+
+#pause-modal.active {
+    display: flex;
+}
+
+.pause-card {
+    width: 380px;
+    background: #fbf5e8;
+    color: var(--mucha-ink);
+    border: 4px double var(--mucha-gold);
+    border-radius: 12px;
+    padding: 24px 28px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(197, 155, 76, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    text-align: center;
+}
+
+.pause-card h3 {
+    font-family: 'Cinzel Decorative', 'Noto Serif TC', serif;
+    font-size: 24px;
+    color: var(--mucha-gold-dark);
+    margin-bottom: 6px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.pause-card p {
+    font-size: 13px;
+    color: #6d4b2e;
+    margin-bottom: 20px;
+}
+
+.pause-button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.pause-btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: 'Cinzel', 'Noto Serif TC', serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 2px solid;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.pause-btn.resume-btn {
+    background: #1d4655;
+    border-color: #40b9db;
+    color: #e5f7ff;
+}
+
+.pause-btn.resume-btn:hover {
+    background: #2a6378;
+    transform: translateY(-2px);
+    box-shadow: 0 0 16px rgba(56, 200, 232, 0.6);
+}
+
+.pause-btn.lobby-btn {
+    background: #472b22;
+    border-color: #a65839;
+    color: #f7e6dc;
+}
+
+.pause-btn.lobby-btn:hover {
+    background: #5f3a2e;
+    transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   STAGE CLEAR SETTLEMENT MODAL (MATCHING REFERENCE IMAGE)
+   ========================================================================== */
+#stage-clear-modal {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(12, 6, 4, 0.88);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    animation: fadeIn 0.3s ease-out;
+}
+
+#stage-clear-modal.active {
+    display: flex;
+}
+
+.clear-wrapper {
+    width: 95%;
+    max-width: 920px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.clear-header {
+    text-align: center;
+    margin-bottom: 6px;
+    position: relative;
+}
+
+.clear-title-en {
+    font-family: 'Cinzel Decorative', 'Cinzel', serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: #ffe694;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.7), 0 3px 6px rgba(0,0,0,0.9);
+    letter-spacing: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.clear-title-zh {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--mucha-cyan);
+    text-shadow: 0 0 18px rgba(56, 200, 232, 0.8), 0 2px 4px rgba(0,0,0,0.8);
+    letter-spacing: 6px;
+    margin-top: -4px;
+}
+
+.clear-main-content {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 18px;
+    width: 100%;
+    margin-top: 2px;
+}
+
+.character-companion-box {
+    flex: 0 0 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.speech-bubble {
+    background: #1c1316;
+    border: 2px solid #8e629b;
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #f7eafc;
+    font-size: 12px;
+    line-height: 1.4;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+    margin-bottom: 10px;
+    width: 220px;
+}
+
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 45px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #8e629b;
+}
+
+.companion-actors {
+    width: 220px;
+    height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.grimoire-book-container {
+    flex: 1 1 auto;
+    position: relative;
+    background: #eeddbb;
+    border: 6px solid #452a1a;
+    border-radius: 12px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.9), inset 0 0 40px rgba(160, 115, 60, 0.35);
+    padding: 18px 26px 14px;
+    color: #24140b;
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4) 0%, transparent 80%),
+        linear-gradient(90deg, #dfc89d 0%, #faeed7 12%, #fffaf0 48%, #e0cca3 50%, #fffaf0 52%, #faeed7 88%, #dfc89d 100%);
+}
+
+.grimoire-book-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 6px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, rgba(80, 50, 30, 0.3), rgba(40, 20, 10, 0.6), rgba(80, 50, 30, 0.3));
+    pointer-events: none;
+}
+
+.best-ribbon-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: #ffdb65;
+    color: #5d3a08;
+    border: 2px dashed #996d18;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 900;
+    transform: rotate(4deg);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+    text-align: center;
+    line-height: 1.2;
+}
+
+.best-ribbon-badge span {
+    display: block;
+    font-size: 13px;
+    color: #8c260c;
+}
+
+.stats-table {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    width: 100%;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dotted rgba(110, 75, 45, 0.3);
+    padding-bottom: 3px;
+}
+
+.stat-row.hero-wpm {
+    border-bottom: 2px solid rgba(140, 100, 60, 0.5);
+    padding-bottom: 5px;
+}
+
+.stat-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-title-en {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: #482f1d;
+    letter-spacing: 1px;
+}
+
+.stat-title-zh {
+    font-size: 11px;
+    color: #7b5839;
+    font-weight: 600;
+}
+
+.stat-number {
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: #24140b;
+}
+
+.stat-number.big-wpm {
+    font-size: 32px;
+    font-weight: 900;
+    color: #a86c0c;
+    text-shadow: 0 1px 2px rgba(255, 230, 150, 0.8);
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.stat-number.big-wpm span {
+    font-size: 15px;
+    color: #5e3b12;
+}
+
+.stats-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 3px 0;
+    color: #a37946;
+    font-size: 12px;
+}
+
+.stats-divider::before, .stats-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #a37946, transparent);
+}
+
+.rewards-row {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 4px;
+}
+
+.reward-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.reward-card .reward-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6a492f;
+}
+
+.reward-card .reward-value {
+    font-family: 'Cinzel', serif;
+    font-size: 19px;
+    font-weight: 900;
+    color: #8f5317;
+}
+
+.reward-card .combo-bonus-pill {
+    font-size: 10px;
+    background: #d89b37;
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 10px;
+    margin-top: 2px;
+}
+
+.clear-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 12px;
+    gap: 20px;
+}
+
+.story-progress-box {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.map-icon {
+    font-size: 26px;
+    color: var(--mucha-gold-light);
+}
+
+.progress-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.progress-label {
+    font-size: 12px;
+    color: #e0cca3;
+    font-weight: 600;
+}
+
+.progress-bar-track {
+    width: 100%;
+    height: 10px;
+    background: #180e0a;
+    border: 1px solid var(--mucha-gold);
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 1px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #d49b35, #ffdd77);
+    border-radius: 4px;
+    width: 75%;
+    transition: width 0.5s ease;
+}
+
+.action-buttons-box {
+    display: flex;
+    gap: 14px;
+}
+
+.modal-btn {
+    padding: 9px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Cinzel', 'Noto Serif TC', serif;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transition: all 0.2s ease;
+    border: 2px solid;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+}
+
+.modal-btn span {
+    font-size: 11px;
+    font-weight: normal;
+    opacity: 0.85;
+}
+
+.modal-btn.replay-btn {
+    background: #382433;
+    border-color: #8c6082;
+    color: #f0dbed;
+}
+
+.modal-btn.replay-btn:hover {
+    background: #52354a;
+    transform: translateY(-2px);
+}
+
+.modal-btn.next-btn {
+    background: #1d4655;
+    border-color: #40b9db;
+    color: #e5f7ff;
+    box-shadow: 0 0 16px rgba(56, 200, 232, 0.4), 0 4px 14px rgba(0,0,0,0.6);
+}
+
+.modal-btn.next-btn:hover {
+    background: #2a6378;
+    transform: translateY(-2px);
+    box-shadow: 0 0 22px rgba(56, 200, 232, 0.8);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-height: 720px) {
+    .clear-title-en { font-size: 28px; }
+    .clear-title-zh { font-size: 19px; }
+    .character-companion-box { flex: 0 0 180px; }
+    .companion-actors { width: 170px; height: 130px; }
+    .speech-bubble { font-size: 11px; width: 180px; }
+    .grimoire-book-container { padding: 10px 16px 8px; }
+    .stat-number.big-wpm { font-size: 24px; }
+    .modal-btn { padding: 7px 14px; font-size: 12px; }
+    .kb-key { width: 30px; height: 30px; font-size: 11px; }
+    .kb-key.space-bar { width: 180px; }
+    #hands-canvas { width: 260px; height: 95px; }
+    .pause-card { width: 320px; padding: 18px 20px; }
+    .pause-card h3 { font-size: 20px; }
+    #demo-skip-btn { bottom: 12px; right: 14px; padding: 6px 12px; font-size: 11px; }
+}
+</style>
+</head>
+
+<body>
+<div id="app-container">
+    <!-- Top Art Nouveau Navigation Bar -->
+    <header id="header-bar">
+        <div class="brand-title">
+            <span style="color: var(--mucha-gold); font-size: 14px;">✦</span>
+            <span>鍵盤魔導師</span>
+            <span class="demo-tag">測試版 DEMO</span>
+            <span class="stage-badge-tag" id="hud-stage-name">Stage 1: 基準鍵入門</span>
+        </div>
+
+        <div class="hud-panel">
+            <div class="hud-item">
+                <span class="hud-label">連續詠唱 Combo</span>
+                <span class="hud-value hud-combo-highlight" id="hud-combo">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">淨化進度 Stage</span>
+                <span class="hud-value" id="hud-stage-progress">0 / 10</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">得分 Score</span>
+                <span class="hud-value" id="hud-score">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">金幣 Gold</span>
+                <span class="hud-value" style="color: #ffd777;" id="hud-gold">0g</span>
+            </div>
+            <button class="hud-action-btn" id="btn-pause-hud" title="暫停遊戲 (ESC)">⏸ 暫停</button>
+            <button class="settings-toggle-btn" id="btn-settings" title="遊戲設定">⚙</button>
+        </div>
+    </header>
+
+    <!-- Settings Dropdown -->
+    <div id="settings-modal">
+        <h4>❖ 遊戲設定 Settings ❖</h4>
+        <label class="setting-option">
+            <span>顯示初學者鍵位與手型指引</span>
+            <input type="checkbox" id="chk-guide" checked>
+        </label>
+    </div>
+
+    <!-- DEMO EXCLUSIVE: Stage Nodes Selector Modal -->
+    <div id="demo-stages-modal">
+        <div class="stage-selector-card">
+            <div class="selector-header">
+                <h3>❖ 測試版：命運之輪 ‧ 關卡進度節點選擇 ❖</h3>
+                <button class="selector-close-btn" id="btn-close-stage-selector" title="關閉">✕</button>
+            </div>
+            <div class="stage-nodes-grid" id="stage-nodes-container">
+                <!-- Dynamically injected stage nodes -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ESC Pause Menu Modal -->
+    <div id="pause-modal">
+        <div class="pause-card">
+            <h3>❖ 遊戲暫停 ❖</h3>
+            <p>按下 ESC 鍵或點擊下方按鈕以繼續冒險</p>
+            <div class="pause-button-group">
+                <button class="pause-btn resume-btn" id="btn-resume-game">
+                    ▶ 繼續遊戲 RESUME
+                </button>
+                <button class="pause-btn lobby-btn" id="btn-return-lobby">
+                    ⌂ 返回大廳 RETURN TO LOBBY
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Game Canvas Container (Dynamically Fits Window) -->
+    <main id="stage-container">
+        <canvas id="gameCanvas"></canvas>
+        <!-- DEMO EXCLUSIVE: SKIP BUTTON (Bottom-Right) -->
+        <button id="demo-skip-btn" title="演示功能：直接跳過當前關卡並進入結算">
+            <span class="skip-icon">⏭</span>
+            <span>SKIP 跳過關卡</span>
+        </button>
+    </main>
+
+    <!-- Bottom Typing & Hands Guide -->
+    <footer id="guide-container">
+        <div id="instruction-banner">
+            按下 <span class="key-tag">SPACE</span> 空白鍵 踏入奇幻之森
+        </div>
+        <div class="guide-content-row">
+            <div id="keyboard-grid"></div>
+            <canvas id="hands-canvas" width="480" height="180"></canvas>
+        </div>
+    </footer>
+
+    <!-- STAGE CLEAR SETTLEMENT MODAL (Matching User Reference Image) -->
+    <div id="stage-clear-modal">
+        <div class="clear-wrapper">
+            <!-- 1. Header -->
+            <div class="clear-header">
+                <div class="clear-title-en">✨ STAGE CLEAR! ✨</div>
+                <div class="clear-title-zh">戰役勝利</div>
+            </div>
+
+            <!-- 2. Main Center Content -->
+            <div class="clear-main-content">
+                <!-- Left: Mage Character & Flying Curse Grimoire -->
+                <div class="character-companion-box">
+                    <div class="speech-bubble">
+                        <span id="companion-dialogue">哼，還以為你的手指打結了呢！勉強算你合格啦。</span>
+                    </div>
+                    <canvas id="companion-canvas" class="companion-actors" width="220" height="180"></canvas>
+                </div>
+
+                <!-- Right: The Open Parchment Spellbook -->
+                <div class="grimoire-book-container">
+                    <div class="best-ribbon-badge" id="badge-best">
+                        New Personal Best!
+                        <span>突破極限！</span>
+                    </div>
+
+                    <div class="stats-table">
+                        <!-- Hero WPM -->
+                        <div class="stat-row hero-wpm">
+                            <div class="stat-meta">
+                                <span class="stat-title-en">WORDS PER MINUTE</span>
+                                <span class="stat-title-zh">詠唱速度</span>
+                            </div>
+                            <div class="stat-number big-wpm" id="modal-wpm">
+                                85 <span>WPM</span>
+                            </div>
+                        </div>
+
+                        <!-- Accuracy -->
+                        <div class="stat-row">
+                            <div class="stat-meta">
+                                <span class="stat-title-en">ACCURACY</span>
+                                <span class="stat-title-zh">咒語精確度</span>
+                            </div>
+                            <div class="stat-number" id="modal-accuracy">96%</div>
+                        </div>
+
+                        <!-- Spell Fizzles / Typo -->
+                        <div class="stat-row">
+                            <div class="stat-meta">
+                                <span class="stat-title-en">SPELL FIZZLES</span>
+                                <span class="stat-title-zh">錯字卡彈</span>
+                            </div>
+                            <div class="stat-number" id="modal-typos">8 Times</div>
+                        </div>
+
+                        <!-- Spells Cast -->
+                        <div class="stat-row">
+                            <div class="stat-meta">
+                                <span class="stat-title-en">SPELLS CAST</span>
+                                <span class="stat-title-zh">詠唱咒語</span>
+                            </div>
+                            <div class="stat-number" id="modal-spells">42</div>
+                        </div>
+
+                        <!-- Max Combo -->
+                        <div class="stat-row">
+                            <div class="stat-meta">
+                                <span class="stat-title-en">COMBO HIGH</span>
+                                <span class="stat-title-zh">最高連擊 (加成倍率)</span>
+                            </div>
+                            <div class="stat-number" id="modal-combo">28 (1.5x)</div>
+                        </div>
+
+                        <!-- Ornamental Divider -->
+                        <div class="stats-divider">✦ ❖ ✦</div>
+
+                        <!-- Rewards Row -->
+                        <div class="rewards-row">
+                            <div class="reward-card">
+                                <span class="reward-title">GOLD EARNED 獲得金幣</span>
+                                <span class="reward-value" id="modal-gold">+120g</span>
+                                <span class="combo-bonus-pill" id="modal-combo-pill">Combo 1.5x 加成</span>
+                            </div>
+                            <div class="reward-card">
+                                <span class="reward-title">COMPANION BOND 同伴契合度</span>
+                                <span class="reward-value" id="modal-bond">+5%</span>
+                                <span style="font-size: 11px; color: #7d5939;">+65 EXP 經驗值</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Footer: Story Progress & Action Buttons -->
+            <div class="clear-footer-row">
+                <div class="story-progress-box">
+                    <div class="map-icon">🗺️</div>
+                    <div class="progress-info">
+                        <div class="progress-label" id="modal-story-progress">
+                            STORY PROGRESS: Chapter 1 (100% completed) 封印解除進度：第一章 (100%)
+                        </div>
+                        <div class="progress-bar-track">
+                            <div class="progress-bar-fill" id="modal-progress-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons-box">
+                    <button class="modal-btn replay-btn" id="btn-replay">
+                        REPLAY
+                        <span>(重新挑戰)</span>
+                    </button>
+                    <button class="modal-btn next-btn" id="btn-next-stage">
+                        NEXT STAGE
+                        <span>(前往下一關)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    1. PEDAGOGICAL STAGE PROGRESSION SYSTEM                   ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+const STAGE_CONFIGS = [
+    {
+        stage: 1,
+        titleEn: "Stage 1: Home Row",
+        titleZh: "基準鍵指法入門",
+        storyChapter: "第一章：神木初醒 (Home Row)",
+        targetKills: 10,
+        type: 'single_key',
+        charPool: ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'"],
+        speedMin: 72,
+        speedMax: 92,
+        spawnInterval: 2.1,
+        desc: "單鍵擊殺！練習左手小指至右手小指的基準鍵位 [A]~[']"
+    },
+    {
+        stage: 2,
+        titleEn: "Stage 2: Top Row",
+        titleZh: "上排天律指法",
+        storyChapter: "第二章：蒼穹天星 (Top Row)",
+        targetKills: 10,
+        type: 'single_key',
+        charPool: ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+        speedMin: 72,
+        speedMax: 92,
+        spawnInterval: 2.1,
+        desc: "單鍵擊殺！練習向上延伸指法 [Q]~[P]"
+    },
+    {
+        stage: 3,
+        titleEn: "Stage 3: Bottom Row",
+        titleZh: "底排淵藪指法",
+        storyChapter: "第三章：深淵符文 (Bottom Row)",
+        targetKills: 10,
+        type: 'single_key',
+        charPool: ['Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/'],
+        speedMin: 72,
+        speedMax: 92,
+        spawnInterval: 2.1,
+        desc: "單鍵擊殺！練習向下延伸指法 [Z]~[/]"
+    },
+    {
+        stage: 4,
+        titleEn: "Stage 4: Full Key Resonance",
+        titleZh: "全鍵指法共鳴",
+        storyChapter: "第四章：全鍵覺醒 (All Keys)",
+        targetKills: 12,
+        type: 'single_key',
+        charPool: [
+            'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'",
+            'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
+            'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/'
+        ],
+        speedMin: 65,
+        speedMax: 85,
+        spawnInterval: 1.9,
+        desc: "全鍵位融會貫通！單鍵快速反應測試"
+    },
+    {
+        stage: 5,
+        titleEn: "Stage 5: Short Words",
+        titleZh: "基礎真名詠唱 (≤5字)",
+        storyChapter: "第五章：元素召喚 (Short Words)",
+        targetKills: 10,
+        type: 'short_words_few_singles',
+        wordsPool: [
+            'ICE', 'FIRE', 'BOLT', 'WIND', 'DARK',
+            'HEAL', 'MANA', 'RUNE', 'GLOW', 'WAVE',
+            'STAR', 'MAGE', 'AURA', 'DAWN', 'ROSE',
+            'FERN', 'IRIS', 'GOLD', 'RUBY', 'JADE'
+        ],
+        singleKeyPool: ['A','S','D','F','J','K','L','E','I','O','R'],
+        speedMin: 46,
+        speedMax: 56,
+        spawnInterval: 2.6,
+        desc: "正式進入英文單詞拼寫！單鍵大幅減少，怪物血量提升"
+    },
+    {
+        stage: 6,
+        titleEn: "Stage 6: Long Words",
+        titleZh: "秘術真名進階 (5-10字)",
+        storyChapter: "第六章：秘法巨典 (5-10 Letters)",
+        targetKills: 8,
+        type: 'medium_words',
+        wordsPool: [
+            'CRYSTAL', 'PHOENIX', 'THUNDER', 'SORCERY', 'ELEMENT',
+            'ENCHANT', 'MYSTERY', 'BLIZZARD', 'ILLUSION', 'CELESTIAL',
+            'ETHEREAL', 'STARFALL', 'TWILIGHT', 'SOLITARY', 'LAVENDER'
+        ],
+        speedMin: 32,
+        speedMax: 42,
+        spawnInterval: 3.2,
+        desc: "完全去除單鍵！5~10字母中長單詞，怪物血厚移速慢"
+    },
+    {
+        stage: 7,
+        titleEn: "Stage 7: Compound Spells",
+        titleZh: "雙生複合印咒",
+        storyChapter: "第七章：雙生曼陀羅 (Compound Words)",
+        targetKills: 8,
+        type: 'compound_words',
+        wordsPool: [
+            'ICE BOLT', 'FIRE WALL', 'HOLY LIGHT', 'DARK NOVA',
+            'WIND BLADE', 'MANA SHIELD', 'STAR DUST', 'TIME WARP',
+            'ROSE THORNS', 'GOLDEN DAWN', 'AURA BURST', 'MOON SHADOW'
+        ],
+        speedMin: 24,
+        speedMax: 32,
+        spawnInterval: 3.6,
+        desc: "雙詞複合印咒！包含拇指空白鍵 [SPACE]，考驗節奏轉換"
+    },
+    {
+        stage: 8,
+        titleEn: "Stage 8: Divine Litany",
+        titleZh: "終焉神聖詠章",
+        storyChapter: "第八章：終焉神聖之書 (Full Sentences)",
+        targetKills: 6,
+        type: 'sentences',
+        wordsPool: [
+            'Cast the light, heal the soul.',
+            'By wind and fire, awaken now!',
+            'The stars align; darkness fades.',
+            'An ancient rune glows in the night.',
+            'Nature weaves the golden crown.',
+            'Time flows on; legends never die.'
+        ],
+        speedMin: 18,
+        speedMax: 26,
+        spawnInterval: 4.2,
+        desc: "完整奇幻詠唱長句！含大寫、空格與標點符號"
+    }
+];
+
+const FINGER_INFO = {
+    'lp': { name: '左手小指 Left Pinky',   color: '#b75e54', keyBg: '#ecd5d2' },
+    'lr': { name: '左手無名指 Left Ring',   color: '#c97e53', keyBg: '#f3e0d5' },
+    'lm': { name: '左手中指 Left Middle',   color: '#caa048', keyBg: '#f6ebd0' },
+    'li': { name: '左手食指 Left Index',    color: '#658a69', keyBg: '#d7e4d8' },
+    'ri': { name: '右手食指 Right Index',   color: '#466c82', keyBg: '#cfdfe7' },
+    'rm': { name: '右手中指 Right Middle',  color: '#7b6287', keyBg: '#e2dbe6' },
+    'rr': { name: '右手無名指 Right Ring',  color: '#aa6b88', keyBg: '#eddde5' },
+    'rp': { name: '右手小指 Right Pinky',   color: '#4f8578', keyBg: '#d5e9e4' },
+    'th': { name: '雙手拇指 Thumb',         color: '#7f6a5b', keyBg: '#e6ded7' },
+};
+
+const KEY_MAPPING = {
+    'Q':'lp','A':'lp','Z':'lp',
+    'W':'lr','S':'lr','X':'lr',
+    'E':'lm','D':'lm','C':'lm',
+    'R':'li','T':'li','F':'li','G':'li','V':'li','B':'li',
+    'Y':'ri','U':'ri','H':'ri','J':'ri','N':'ri','M':'ri',
+    'I':'rm','K':'rm',',':'rm',
+    'O':'rr','L':'rr','.':'rr',
+    'P':'rp',';':'rp',"'":'rp','/':'rp','!':'rp','?':'rp',
+    ' ':'th'
+};
+
+const KB_LAYOUT = [
+    { offset: 0,   keys: ['Q','W','E','R','T','Y','U','I','O','P'] },
+    { offset: 0.25, keys: ['A','S','D','F','G','H','J','K','L',';',"'"] },
+    { offset: 0.7, keys: ['Z','X','C','V','B','N','M',',','.','/'] }
+];
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    2. CANVASES & ENGINE INITIALIZATION                       ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+const stageContainer = document.getElementById('stage-container');
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const handsCanvas = document.getElementById('hands-canvas');
+const handsCtx = handsCanvas.getContext('2d');
+
+const companionCanvas = document.getElementById('companion-canvas');
+const companionCtx = companionCanvas.getContext('2d');
+
+const pauseModal = document.getElementById('pause-modal');
+const demoStagesModal = document.getElementById('demo-stages-modal');
+
+let canvasW = 1000;
+let canvasH = 500;
+let dpr = window.devicePixelRatio || 1;
+
+function resizeCanvases() {
+    const rect = stageContainer.getBoundingClientRect();
+    canvasW = Math.max(rect.width, 400);
+    canvasH = Math.max(rect.height, 260);
+
+    dpr = window.devicePixelRatio || 1;
+    canvas.width = canvasW * dpr;
+    canvas.height = canvasH * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const hRect = handsCanvas.getBoundingClientRect();
+    handsCanvas.width = hRect.width * dpr;
+    handsCanvas.height = hRect.height * dpr;
+    handsCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+window.addEventListener('resize', resizeCanvases);
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    3. GAME & STAGE STATISTICS STATE                          ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+let gameState = 'title'; // 'title' | 'playing' | 'stageclear' | 'gameover'
+let isPaused = false;
+let pauseStartTime = 0;
+
+let currentStage = 1;
+let stageTargetKills = 10;
+let stageKills = 0;
+
+let score = 0;
+let totalGold = 0;
+let playerHp = 100;
+const MAX_HP = 100;
+
+// Typing Metrics
+let stageStartTime = 0;
+let correctKeystrokes = 0;
+let typoCount = 0;
+let spellsCast = 0;
+let currentCombo = 0;
+let maxCombo = 0;
+let highestWpmEver = 0;
+
+// Smart Target Lock
+let lockedMonster = null;
+let monsters = [];
+let magicSpells = [];
+let particles = [];
+let ambientPetals = [];
+
+let spawnTimer = 0;
+let screenShake = 0;
+let lastTime = 0;
+
+for (let i = 0; i < 30; i++) {
+    ambientPetals.push({
+        x: Math.random() * 1200,
+        y: Math.random() * 800,
+        size: Math.random() * 5 + 4,
+        vx: -(Math.random() * 30 + 20),
+        vy: Math.random() * 20 + 10,
+        rot: Math.random() * Math.PI * 2,
+        vRot: (Math.random() - 0.5) * 2,
+        color: Math.random() > 0.4 ? 'rgba(215, 140, 130, 0.35)' : 'rgba(225, 195, 125, 0.3)'
+    });
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    4. ART NOUVEAU RENDERING HELPERS                          ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+function drawMuchaHalo(ctx, cx, cy, radius, time, isGolden) {
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    const glowGrad = ctx.createRadialGradient(0, 0, radius * 0.4, 0, 0, radius * 1.3);
+    glowGrad.addColorStop(0, isGolden ? 'rgba(235, 195, 110, 0.45)' : 'rgba(185, 140, 95, 0.25)');
+    glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = glowGrad;
+    ctx.beginPath();
+    ctx.arc(0, 0, radius * 1.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = isGolden ? '#c59b4c' : '#725134';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(0, 0, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    const petCount = 12;
+    ctx.rotate(time * 0.15);
+    for (let i = 0; i < petCount; i++) {
+        const angle = (i * Math.PI * 2) / petCount;
+        const x1 = Math.cos(angle) * (radius - 12);
+        const y1 = Math.sin(angle) * (radius - 12);
+
+        ctx.fillStyle = isGolden ? '#e8c97e' : '#a8855e';
+        ctx.beginPath();
+        ctx.arc(x1, y1, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    ctx.strokeStyle = isGolden ? '#f6d98e' : '#8d6848';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(0, 0, radius - 16, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+function drawMuchaRibbon(ctx, x, y, width, height, isLocked) {
+    ctx.save();
+    const halfW = width / 2;
+    const halfH = height / 2;
+
+    ctx.fillStyle = 'rgba(18, 10, 6, 0.6)';
+    ctx.beginPath();
+    ctx.roundRect(x - halfW + 3, y - halfH + 4, width, height, 6);
+    ctx.fill();
+
+    const grad = ctx.createLinearGradient(x - halfW, y - halfH, x + halfW, y + halfH);
+    if (isLocked) {
+        grad.addColorStop(0, '#fffbf2');
+        grad.addColorStop(0.5, '#f5e8cf');
+        grad.addColorStop(1, '#ebd4ac');
+    } else {
+        grad.addColorStop(0, '#e5d9c7');
+        grad.addColorStop(0.5, '#d4c3ac');
+        grad.addColorStop(1, '#c2af96');
+    }
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(x - halfW, y - halfH, width, height, 5);
+    ctx.fill();
+
+    ctx.strokeStyle = isLocked ? '#a67c2d' : '#5c4533';
+    ctx.lineWidth = isLocked ? 2 : 1.2;
+    ctx.stroke();
+
+    ctx.strokeStyle = isLocked ? 'rgba(166, 124, 45, 0.4)' : 'rgba(92, 69, 51, 0.25)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - halfW + 3, y - halfH + 3, width - 6, height - 6);
+
+    ctx.fillStyle = isLocked ? '#c59b4c' : '#7d6148';
+    ctx.beginPath();
+    ctx.arc(x - halfW, y, 3, 0, Math.PI * 2);
+    ctx.arc(x + halfW, y, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    5. MONSTERS, SPELLS & PARTICLES                           ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+function getStageConfig(stageNum) {
+    const idx = Math.min(stageNum - 1, STAGE_CONFIGS.length - 1);
+    return STAGE_CONFIGS[idx];
+}
+
+function generateWordForStage(cfg) {
+    if (cfg.type === 'single_key') {
+        return cfg.charPool[Math.floor(Math.random() * cfg.charPool.length)];
+    } else if (cfg.type === 'short_words_few_singles') {
+        if (Math.random() < 0.15 && cfg.singleKeyPool) {
+            return cfg.singleKeyPool[Math.floor(Math.random() * cfg.singleKeyPool.length)];
+        }
+        return cfg.wordsPool[Math.floor(Math.random() * cfg.wordsPool.length)];
+    } else {
+        return cfg.wordsPool[Math.floor(Math.random() * cfg.wordsPool.length)];
+    }
+}
+
+class MuchaMonster {
+    constructor() {
+        const cfg = getStageConfig(currentStage);
+        this.word = generateWordForStage(cfg);
+        this.typed = 0;
+        this.x = canvasW + 60;
+        const topBound = 80;
+        const bottomBound = canvasH - 100;
+        this.y = Math.random() * Math.max(bottomBound - topBound, 50) + topBound;
+
+        const len = this.word.length;
+        const baseSpeed = Math.random() * (cfg.speedMax - cfg.speedMin) + cfg.speedMin;
+        this.speed = Math.max(16, baseSpeed - Math.min(20, len * 0.8));
+
+        this.alive = true;
+        this.floatOffset = Math.random() * Math.PI * 2;
+        this.hitFlash = 0;
+        this.deathAnim = 0;
+        this.colorSeed = Math.floor(Math.random() * 3);
+        this.isSingleKey = (len === 1);
+    }
+
+    update(dt) {
+        if (this.deathAnim > 0) {
+            this.deathAnim -= dt;
+            if (this.deathAnim <= 0) this.alive = false;
+            return;
+        }
+
+        this.x -= this.speed * dt;
+        this.floatOffset += dt * 2.2;
+        if (this.hitFlash > 0) this.hitFlash -= dt;
+
+        const playerX = 145;
+        if (this.x <= playerX + 30) {
+            playerHp = Math.max(0, playerHp - 5);
+            screenShake = 0.3;
+            currentCombo = 0;
+            updateHUD();
+            createParticleBurst(playerX, this.y, '#b75e54', 16);
+            this.alive = false;
+            if (lockedMonster === this) lockedMonster = null;
+        }
+    }
+
+    draw(ctx, time) {
+        const isLocked = (lockedMonster === this);
+        const floatY = this.y + Math.sin(this.floatOffset) * 6;
+
+        ctx.save();
+        if (this.deathAnim > 0) {
+            ctx.globalAlpha = Math.max(0, this.deathAnim / 0.4);
+            const scale = 1 + (0.4 - this.deathAnim) * 1.5;
+            ctx.translate(this.x, floatY);
+            ctx.scale(scale, scale);
+            ctx.translate(-this.x, -floatY);
+        } else if (lockedMonster && !isLocked) {
+            ctx.globalAlpha = 0.42;
+        }
+
+        if (isLocked) {
+            const haloR = this.word.length > 8 ? 58 : 46;
+            drawMuchaHalo(ctx, this.x, floatY, haloR, time, true);
+        }
+
+        ctx.save();
+        ctx.translate(this.x, floatY);
+
+        const bodyScale = this.isSingleKey ? 0.85 : (this.word.length > 8 ? 1.15 : 1.0);
+        ctx.scale(bodyScale, bodyScale);
+
+        const wingColors = [
+            ['#2c4959', '#638e9e'],
+            ['#582d38', '#ad6979'],
+            ['#485c48', '#86a886']
+        ][this.colorSeed];
+
+        ctx.strokeStyle = '#22150f';
+        ctx.lineWidth = 1.8;
+        ctx.fillStyle = this.hitFlash > 0 ? '#ffeaab' : wingColors[0];
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.bezierCurveTo(-26, -30, -42, -15, -28, 8);
+        ctx.bezierCurveTo(-18, 18, -6, 12, 0, 0);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.bezierCurveTo(26, -30, 42, -15, 28, 8);
+        ctx.bezierCurveTo(18, 18, 6, 12, 0, 0);
+        ctx.fill();
+        ctx.stroke();
+
+        const coreGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 14);
+        coreGrad.addColorStop(0, '#fef9e7');
+        coreGrad.addColorStop(0.6, isLocked ? '#d4af37' : wingColors[1]);
+        coreGrad.addColorStop(1, '#2c1910');
+        ctx.fillStyle = coreGrad;
+        ctx.beginPath();
+        ctx.arc(0, 0, 11, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(-3, -3, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+
+        ctx.font = '700 16px "Cinzel", "Noto Serif TC", serif';
+        const wordText = this.word;
+        const textMetrics = ctx.measureText(wordText);
+        const ribbonW = Math.max(textMetrics.width + 24, 46);
+        const ribbonH = 28;
+        const ribbonY = floatY - (this.isSingleKey ? 36 : 42);
+
+        drawMuchaRibbon(ctx, this.x, ribbonY, ribbonW, ribbonH, isLocked);
+
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        let curX = this.x - (textMetrics.width / 2);
+
+        for (let i = 0; i < this.word.length; i++) {
+            const char = this.word[i];
+            const displayChar = (char === ' ') ? '␣' : char;
+            const cw = ctx.measureText(char).width;
+
+            if (i < this.typed) {
+                ctx.fillStyle = 'rgba(80, 60, 45, 0.45)';
+                ctx.fillText(displayChar, curX, ribbonY);
+                ctx.strokeStyle = 'rgba(120, 70, 50, 0.6)';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.moveTo(curX - 1, ribbonY);
+                ctx.lineTo(curX + cw + 1, ribbonY);
+                ctx.stroke();
+            } else if (i === this.typed && isLocked) {
+                ctx.save();
+                ctx.fillStyle = '#9b2c14';
+                ctx.shadowColor = '#d4af37';
+                ctx.shadowBlur = 8;
+                ctx.fillText(displayChar, curX, ribbonY);
+                ctx.restore();
+            } else {
+                ctx.fillStyle = isLocked ? '#22150f' : '#523a2a';
+                ctx.fillText(displayChar, curX, ribbonY);
+            }
+            curX += cw;
+        }
+
+        ctx.restore();
+    }
+}
+
+class MuchaSpell {
+    constructor(sx, sy, tx, ty) {
+        this.sx = sx; this.sy = sy;
+        this.x = sx; this.y = sy;
+        this.tx = tx; this.ty = ty;
+        this.speed = 1000;
+        this.alive = true;
+        this.trail = [];
+        this.wavePhase = Math.random() * Math.PI;
+    }
+
+    update(dt) {
+        const dx = this.tx - this.x;
+        const dy = this.ty - this.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist < this.speed * dt) {
+            this.alive = false;
+            createParticleBurst(this.tx, this.ty, '#4cd2ff', 12);
+            createParticleBurst(this.tx, this.ty, '#f6eedb', 8);
+            return;
+        }
+
+        this.trail.push({ x: this.x, y: this.y, alpha: 1 });
+        if (this.trail.length > 12) this.trail.shift();
+
+        this.x += (dx / dist) * this.speed * dt;
+        this.y += (dy / dist) * this.speed * dt;
+        this.wavePhase += dt * 15;
+
+        this.trail.forEach(t => t.alpha *= 0.82);
+    }
+
+    draw(ctx) {
+        if (this.trail.length > 1) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(this.trail[0].x, this.trail[0].y);
+            for (let i = 1; i < this.trail.length; i++) {
+                ctx.lineTo(this.trail[i].x, this.trail[i].y);
+            }
+            ctx.strokeStyle = 'rgba(76, 210, 255, 0.6)';
+            ctx.lineWidth = 3.5;
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.fillStyle = '#eaf8ff';
+        ctx.shadowColor = '#4cd2ff';
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        ctx.arc(0, 0, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+class MuchaParticle {
+    constructor(x, y, color, size, vx, vy, life) {
+        this.x = x; this.y = y;
+        this.color = color;
+        this.size = size;
+        this.vx = vx; this.vy = vy;
+        this.life = life;
+        this.maxLife = life;
+        this.alive = true;
+        this.rot = Math.random() * Math.PI * 2;
+        this.vRot = (Math.random() - 0.5) * 4;
+    }
+    update(dt) {
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.vy += 45 * dt;
+        this.rot += this.vRot * dt;
+        this.life -= dt;
+        if (this.life <= 0) this.alive = false;
+    }
+    draw(ctx) {
+        const ratio = Math.max(0, this.life / this.maxLife);
+        ctx.save();
+        ctx.globalAlpha = ratio;
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rot);
+
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, this.size * ratio, this.size * 0.55 * ratio, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+}
+
+function createParticleBurst(x, y, color, count) {
+    for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 140 + 30;
+        particles.push(new MuchaParticle(
+            x, y, color,
+            Math.random() * 4 + 3,
+            Math.cos(angle) * spd,
+            Math.sin(angle) * spd - 30,
+            Math.random() * 0.5 + 0.4
+        ));
+    }
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    6. PLAYER CHARACTER & COMPANION GRIMOIRE                  ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+function drawMuchaPlayer(ctx, time) {
+    const px = 145;
+    const py = canvasH / 2;
+    const breathe = Math.sin(time * 3) * 2.5;
+
+    ctx.save();
+
+    // 1. Huge Divine Aureole behind player
+    drawMuchaHalo(ctx, px - 10, py - 10, 80, time, true);
+
+    // 2. Floating Flying Grimoire Companion
+    const bookX = px - 66;
+    const bookFloatY = py - 30 + Math.sin(time * 3.5) * 6;
+    const wingFlap = Math.sin(time * 9) * 0.35;
+
+    ctx.save();
+    ctx.translate(bookX, bookFloatY);
+
+    const bookAura = ctx.createRadialGradient(0, 0, 4, 0, 0, 36);
+    bookAura.addColorStop(0, 'rgba(155, 89, 182, 0.35)');
+    bookAura.addColorStop(1, 'rgba(155, 89, 182, 0)');
+    ctx.fillStyle = bookAura;
+    ctx.beginPath();
+    ctx.arc(0, 0, 36, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#612b4e';
+    ctx.strokeStyle = '#2d1123';
+    ctx.lineWidth = 1.5;
+
+    ctx.save();
+    ctx.translate(-14, 0);
+    ctx.rotate(-wingFlap);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(-26, -20, -24, 10, 0, 7);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(14, 0);
+    ctx.rotate(wingFlap);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(26, -20, 24, 10, 0, 7);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.fillStyle = '#4c265e';
+    ctx.strokeStyle = '#f3ca56';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(-15, -20, 30, 40, 4);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#f3ca56';
+    ctx.fillRect(-15, -20, 5, 5);
+    ctx.fillRect(10, -20, 5, 5);
+    ctx.fillRect(-15, 15, 5, 5);
+    ctx.fillRect(10, 15, 5, 5);
+
+    ctx.fillStyle = '#ffde59';
+    ctx.beginPath();
+    ctx.moveTo(-9, -4);
+    ctx.lineTo(-3, -1);
+    ctx.lineTo(-9, 2);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(9, -4);
+    ctx.lineTo(3, -1);
+    ctx.lineTo(9, 2);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = '#4c265e';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 20);
+    ctx.quadraticCurveTo(-12, 32, -6, 38);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // 3. Apprentice Mage Character Body
+    ctx.save();
+    ctx.translate(px, py);
+
+    ctx.fillStyle = '#2d1833';
+    ctx.strokeStyle = '#180a1c';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-24, -12 + breathe);
+    ctx.lineTo(16, -12 + breathe);
+    ctx.lineTo(26, 52);
+    ctx.lineTo(-32, 52);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#2a3b47';
+    ctx.fillRect(-14, 4 + breathe, 22, 46);
+
+    ctx.fillStyle = '#ffdfbf';
+    ctx.strokeStyle = '#2d160c';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.ellipse(-2, -26 + breathe, 18, 17, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = '#3a2012';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.arc(-8, -26 + breathe, 6, 0, Math.PI * 2);
+    ctx.arc(4, -26 + breathe, 6, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-2, -26 + breathe);
+    ctx.lineTo(-2, -26 + breathe);
+    ctx.stroke();
+
+    ctx.fillStyle = '#1c1a24';
+    ctx.beginPath();
+    ctx.moveTo(-20, -30 + breathe);
+    ctx.bezierCurveTo(-18, -47 + breathe, 14, -47 + breathe, 16, -30 + breathe);
+    ctx.bezierCurveTo(8, -34 + breathe, -8, -34 + breathe, -20, -30 + breathe);
+    ctx.fill();
+
+    const wandAngle = Math.sin(time * 2.5) * 0.08;
+    ctx.save();
+    ctx.translate(14, 0);
+    ctx.rotate(wandAngle);
+
+    ctx.strokeStyle = '#613f24';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(22, -42 + breathe);
+    ctx.stroke();
+
+    const sparkPulse = Math.sin(time * 6) * 2;
+    ctx.fillStyle = '#4cd2ff';
+    ctx.shadowColor = '#4cd2ff';
+    ctx.shadowBlur = 14 + sparkPulse;
+    ctx.beginPath();
+    ctx.arc(23, -44 + breathe, 6 + sparkPulse * 0.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(23, -44 + breathe, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+    ctx.restore();
+
+    // 4. HP Bar
+    const barW = 86;
+    const barH = 10;
+    const barX = px - barW / 2;
+    const barY = py + 68;
+
+    ctx.fillStyle = '#321d14';
+    ctx.beginPath();
+    ctx.roundRect(barX - 2, barY - 2, barW + 4, barH + 4, 4);
+    ctx.fill();
+
+    const hpRatio = Math.max(0, playerHp / MAX_HP);
+    const hpGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+    hpGrad.addColorStop(0, '#5f7a61');
+    hpGrad.addColorStop(0.5, '#c59b4c');
+    hpGrad.addColorStop(1, '#a65839');
+    ctx.fillStyle = hpGrad;
+
+    if (hpRatio > 0) {
+        ctx.beginPath();
+        ctx.roundRect(barX, barY, barW * hpRatio, barH, 2);
+        ctx.fill();
+    }
+
+    ctx.strokeStyle = '#c59b4c';
+    ctx.lineWidth = 1.2;
+    ctx.strokeRect(barX - 2, barY - 2, barW + 4, barH + 4);
+
+    ctx.fillStyle = '#f6eedb';
+    ctx.font = '700 11px "Cinzel", serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${playerHp} / ${MAX_HP} HP`, px, barY + barH + 13);
+
+    if (currentCombo > 1) {
+        ctx.fillStyle = '#ffd777';
+        ctx.shadowColor = '#d4af37';
+        ctx.shadowBlur = 8;
+        ctx.font = '700 12px "Cinzel", serif';
+        ctx.fillText(`✦ COMBO x${currentCombo}`, px, py - 68 + breathe);
+    }
+
+    ctx.restore();
+}
+
+function drawMuchaBackground(ctx, time) {
+    const bgGrad = ctx.createLinearGradient(0, 0, canvasW, canvasH);
+    bgGrad.addColorStop(0, '#241712');
+    bgGrad.addColorStop(0.5, '#1b100c');
+    bgGrad.addColorStop(1, '#110906');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, canvasW, canvasH);
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(197, 155, 76, 0.16)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(120, canvasH / 2, canvasH * 0.55, -Math.PI / 2, Math.PI / 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(197, 155, 76, 0.08)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(120, canvasH / 2, canvasH * 0.62, -Math.PI / 2, Math.PI / 2);
+    ctx.stroke();
+    ctx.restore();
+
+    ambientPetals.forEach(p => {
+        p.x += p.vx * 0.016;
+        p.y += p.vy * 0.016;
+        p.rot += p.vRot * 0.016;
+
+        if (p.x < -30) p.x = canvasW + 30;
+        if (p.y > canvasH + 30) p.y = -20;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    });
+
+    ctx.strokeStyle = 'rgba(197, 155, 76, 0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, canvasH - 12);
+    ctx.lineTo(canvasW, canvasH - 12);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(12, 6, 4, 0.5)';
+    ctx.fillRect(0, canvasH - 12, canvasW, 12);
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    7. TITLE & GAME OVER OVERLAYS                             ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+function drawTitleOverlay(ctx, time) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(14, 8, 5, 0.78)';
+    ctx.fillRect(0, 0, canvasW, canvasH);
+
+    const cx = canvasW / 2;
+    const cy = canvasH / 2;
+
+    const fw = Math.min(canvasW * 0.78, 640);
+    const fh = Math.min(canvasH * 0.78, 330);
+
+    ctx.fillStyle = '#22140d';
+    ctx.strokeStyle = '#c59b4c';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.roundRect(cx - fw / 2, cy - fh / 2, fw, fh, 12);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(232, 201, 126, 0.35)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(cx - fw / 2 + 8, cy - fh / 2 + 8, fw - 16, fh - 16);
+
+    ctx.textAlign = 'center';
+    ctx.font = '700 34px "Cinzel Decorative", "Noto Serif TC", serif';
+    ctx.fillStyle = '#f8ecd5';
+    ctx.shadowColor = '#d4af37';
+    ctx.shadowBlur = 18;
+    ctx.fillText('鍵盤魔導師', cx, cy - 58);
+
+    ctx.font = '700 16px "Cinzel", serif';
+    ctx.fillStyle = '#c59b4c';
+    ctx.shadowBlur = 0;
+    ctx.fillText('KEYBOARD MAGE [DEMO VERSION]', cx, cy - 28);
+
+    ctx.font = '600 13px "Noto Serif TC", serif';
+    ctx.fillStyle = '#d9c6b0';
+    ctx.fillText('階梯指法修練 ✦ 包含進度節點快速跳躍與演示跳過功能', cx, cy + 8);
+
+    const pulse = Math.sin(time * 3.5) * 0.35 + 0.65;
+    ctx.globalAlpha = pulse;
+    ctx.font = '700 15px "Cinzel", "Noto Serif TC", serif';
+    ctx.fillStyle = '#ffd777';
+    ctx.fillText('❖ 按下 SPACE 空白鍵 從第一關開始 ❖', cx, cy + 54);
+    ctx.globalAlpha = 1.0;
+
+    // Interactive Demo Stages Button inside Canvas
+    const btnW = 220;
+    const btnH = 34;
+    const btnX = cx - btnW / 2;
+    const btnY = cy + 80;
+
+    ctx.fillStyle = '#4c2618';
+    ctx.strokeStyle = '#f3ca56';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(btnX, btnY, btnW, btnH, 8);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.font = '700 13px "Cinzel", "Noto Serif TC", serif';
+    ctx.fillStyle = '#fff0c7';
+    ctx.fillText('⚡ 點擊開啟【進度節點】選單', cx, btnY + 22);
+
+    ctx.restore();
+}
+
+// Canvas click detector for Demo button on title screen
+canvas.addEventListener('click', (e) => {
+    if (gameState === 'title') {
+        const rect = canvas.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+        const cx = canvasW / 2;
+        const cy = canvasH / 2;
+        const btnW = 220;
+        const btnH = 34;
+        const btnX = cx - btnW / 2;
+        const btnY = cy + 80;
+
+        if (clickX >= btnX && clickX <= btnX + btnW && clickY >= btnY && clickY <= btnY + btnH) {
+            openDemoStagesModal();
+        }
+    }
+});
+
+function drawGameOverOverlay(ctx, time) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(22, 10, 8, 0.84)';
+    ctx.fillRect(0, 0, canvasW, canvasH);
+
+    const cx = canvasW / 2;
+    const cy = canvasH / 2;
+
+    const fw = Math.min(canvasW * 0.72, 560);
+    const fh = Math.min(canvasH * 0.7, 280);
+
+    ctx.fillStyle = '#26130b';
+    ctx.strokeStyle = '#b75e54';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.roundRect(cx - fw / 2, cy - fh / 2, fw, fh, 10);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.font = '700 32px "Cinzel Decorative", "Noto Serif TC", serif';
+    ctx.fillStyle = '#e8a399';
+    ctx.shadowColor = '#b75e54';
+    ctx.shadowBlur = 14;
+    ctx.fillText('魔力竭盡 Game Over', cx, cy - 40);
+    ctx.shadowBlur = 0;
+
+    ctx.font = '600 16px "Noto Serif TC", serif';
+    ctx.fillStyle = '#f5e8d5';
+    ctx.fillText(`最終榮譽得分 Final Score: ${score}`, cx, cy + 8);
+    ctx.fillText(`成功淨化魔物 Total Purified: ${stageKills}`, cx, cy + 36);
+
+    const pulse = Math.sin(time * 3.5) * 0.35 + 0.65;
+    ctx.globalAlpha = pulse;
+    ctx.font = '700 16px "Cinzel", "Noto Serif TC", serif';
+    ctx.fillStyle = '#ffd777';
+    ctx.fillText('❖ 按下 SPACE 空白鍵 再次詠唱甦醒 ❖', cx, cy + 86);
+
+    ctx.restore();
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    8. STAGE CLEAR SETTLEMENT & STATS LOGIC                   ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+function triggerStageClear() {
+    gameState = 'stageclear';
+    lockedMonster = null;
+
+    const elapsedSeconds = Math.max(1, (Date.now() - stageStartTime) / 1000);
+    const rawWpm = Math.round((correctKeystrokes / 5) / (elapsedSeconds / 60));
+    const finalWpm = Math.max(15, rawWpm);
+
+    const totalAttempts = correctKeystrokes + typoCount;
+    const accuracy = totalAttempts > 0 ? Math.round((correctKeystrokes / totalAttempts) * 100) : 100;
+
+    const comboBonusStep = Math.min(5, Math.floor(maxCombo / 5));
+    const comboMultiplier = +(1.0 + (comboBonusStep * 0.1)).toFixed(1);
+
+    const baseGold = 80 + (stageKills * 10);
+    const goldEarned = Math.round(baseGold * comboMultiplier);
+    totalGold += goldEarned;
+
+    const isNewBest = (finalWpm > highestWpmEver);
+    if (isNewBest) highestWpmEver = finalWpm;
+
+    document.getElementById('modal-wpm').innerHTML = `${finalWpm} <span>WPM</span>`;
+    document.getElementById('modal-accuracy').textContent = `${accuracy}%`;
+    document.getElementById('modal-typos').textContent = `${typoCount} Times`;
+    document.getElementById('modal-spells').textContent = `${spellsCast}`;
+    document.getElementById('modal-combo').textContent = `${maxCombo} (${comboMultiplier.toFixed(1)}x)`;
+    document.getElementById('modal-gold').textContent = `+${goldEarned}g`;
+    document.getElementById('modal-combo-pill').textContent = `Combo ${comboMultiplier.toFixed(1)}x 加成`;
+
+    const cfg = getStageConfig(currentStage);
+    const compDialogue = document.getElementById('companion-dialogue');
+    if (accuracy >= 95 && typoCount <= 2) {
+        compDialogue.textContent = `太神啦！「${cfg.titleZh}」完全難不倒你，指尖靈活得像微風吹過琴弦！`;
+    } else if (typoCount > 6) {
+        compDialogue.textContent = `哼，還以為你的手指打結了呢！「${cfg.titleZh}」勉強算你合格啦。`;
+    } else {
+        compDialogue.textContent = `節奏掌握得真好！獲得了 ${comboMultiplier.toFixed(1)}x 連擊加成，向下一座聖殿邁進吧！`;
+    }
+
+    const percent = Math.min(100, Math.round((currentStage / STAGE_CONFIGS.length) * 100));
+    document.getElementById('modal-story-progress').textContent = 
+        `STORY PROGRESS: Chapter ${currentStage} (${percent}% completed) 封印解除進度：${cfg.storyChapter} (${percent}%)`;
+    document.getElementById('modal-progress-fill').style.width = `${percent}%`;
+
+    document.getElementById('badge-best').style.display = isNewBest ? 'block' : 'none';
+
+    updateHUD();
+    document.getElementById('stage-clear-modal').classList.add('active');
+    renderCompanionArt();
+}
+
+// DEMO EXCLUSIVE: Trigger Stage Skip into Settlement
+function triggerDemoStageSkip() {
+    if (gameState !== 'playing') return;
+    gameState = 'stageclear';
+    lockedMonster = null;
+
+    // Display "-" for typing metrics per requirements
+    document.getElementById('modal-wpm').innerHTML = `- <span>WPM</span>`;
+    document.getElementById('modal-accuracy').textContent = `-`;
+    document.getElementById('modal-typos').textContent = `-`;
+    document.getElementById('modal-spells').textContent = `-`;
+    document.getElementById('modal-combo').textContent = `- (1.0x)`;
+
+    // Gold with 1.0x multiplier
+    const skipGold = 100;
+    totalGold += skipGold;
+    document.getElementById('modal-gold').textContent = `+${skipGold}g`;
+    document.getElementById('modal-combo-pill').textContent = `演示跳過 (1.0x)`;
+
+    const cfg = getStageConfig(currentStage);
+    const compDialogue = document.getElementById('companion-dialogue');
+    compDialogue.textContent = `（魔導書打了個哈欠）透過時空跳躍直接穿過了試煉！下一關可得認真展示喔！`;
+
+    const percent = Math.min(100, Math.round((currentStage / STAGE_CONFIGS.length) * 100));
+    document.getElementById('modal-story-progress').textContent = 
+        `STORY PROGRESS: Chapter ${currentStage} (${percent}% completed) 封印解除進度：${cfg.storyChapter} (${percent}%)`;
+    document.getElementById('modal-progress-fill').style.width = `${percent}%`;
+
+    document.getElementById('badge-best').style.display = 'none';
+
+    updateHUD();
+    document.getElementById('stage-clear-modal').classList.add('active');
+    renderCompanionArt();
+}
+
+function renderCompanionArt() {
+    const cctx = companionCtx;
+    cctx.clearRect(0, 0, 220, 180);
+
+    const bookX = 52;
+    const bookY = 65;
+
+    cctx.fillStyle = '#612b4e';
+    cctx.strokeStyle = '#2d1123';
+    cctx.lineWidth = 1.5;
+    cctx.beginPath();
+    cctx.moveTo(bookX - 18, bookY);
+    cctx.bezierCurveTo(bookX - 45, bookY - 24, bookX - 42, bookY + 12, bookX - 18, bookY + 8);
+    cctx.fill();
+    cctx.stroke();
+
+    cctx.beginPath();
+    cctx.moveTo(bookX + 18, bookY);
+    cctx.bezierCurveTo(bookX + 45, bookY - 24, bookX + 42, bookY + 12, bookX + 18, bookY + 8);
+    cctx.fill();
+    cctx.stroke();
+
+    cctx.fillStyle = '#4c265e';
+    cctx.strokeStyle = '#f3ca56';
+    cctx.lineWidth = 2;
+    cctx.beginPath();
+    cctx.roundRect(bookX - 18, bookY - 24, 36, 46, 5);
+    cctx.fill();
+    cctx.stroke();
+
+    cctx.fillStyle = '#ffde59';
+    cctx.beginPath();
+    cctx.moveTo(-10 + bookX, bookY - 6);
+    cctx.lineTo(-3 + bookX, bookY - 2);
+    cctx.lineTo(-10 + bookX, bookY + 2);
+    cctx.closePath();
+    cctx.fill();
+
+    cctx.beginPath();
+    cctx.moveTo(10 + bookX, bookY - 6);
+    cctx.lineTo(3 + bookX, bookY - 2);
+    cctx.lineTo(10 + bookX, bookY + 2);
+    cctx.closePath();
+    cctx.fill();
+
+    cctx.strokeStyle = '#4c265e';
+    cctx.lineWidth = 2;
+    cctx.beginPath();
+    cctx.moveTo(bookX, bookY + 22);
+    cctx.quadraticCurveTo(bookX - 15, bookY + 36, bookX - 8, bookY + 44);
+    cctx.stroke();
+
+    const mageX = 145;
+    const mageY = 110;
+
+    cctx.fillStyle = '#2d1833';
+    cctx.beginPath();
+    cctx.moveTo(mageX - 22, mageY - 10);
+    cctx.lineTo(mageX + 14, mageY - 10);
+    cctx.lineTo(mageX + 24, mageY + 48);
+    cctx.lineTo(mageX - 30, mageY + 48);
+    cctx.closePath();
+    cctx.fill();
+
+    cctx.fillStyle = '#2a3b47';
+    cctx.fillRect(mageX - 12, mageY + 6, 20, 42);
+
+    cctx.fillStyle = '#ffdfbf';
+    cctx.strokeStyle = '#2d160c';
+    cctx.lineWidth = 1.5;
+    cctx.beginPath();
+    cctx.ellipse(mageX - 2, mageY - 24, 18, 17, 0, 0, Math.PI * 2);
+    cctx.fill();
+    cctx.stroke();
+
+    cctx.strokeStyle = '#3a2012';
+    cctx.lineWidth = 1.6;
+    cctx.beginPath();
+    cctx.arc(mageX - 8, mageY - 24, 6, 0, Math.PI * 2);
+    cctx.arc(mageX + 4, mageY - 24, 6, 0, Math.PI * 2);
+    cctx.stroke();
+    cctx.beginPath();
+    cctx.moveTo(mageX - 2, mageY - 24);
+    cctx.lineTo(mageX - 2, mageY - 24);
+    cctx.stroke();
+
+    cctx.fillStyle = '#1c1a24';
+    cctx.beginPath();
+    cctx.moveTo(mageX - 20, mageY - 28);
+    cctx.bezierCurveTo(mageX - 18, mageY - 45, mageX + 14, mageY - 45, mageX + 16, mageY - 28);
+    cctx.bezierCurveTo(mageX + 8, mageY - 32, mageX - 8, mageY - 32, mageX - 20, mageY - 28);
+    cctx.fill();
+
+    cctx.strokeStyle = '#613f24';
+    cctx.lineWidth = 2.5;
+    cctx.beginPath();
+    cctx.moveTo(mageX + 12, mageY);
+    cctx.lineTo(mageX + 32, mageY - 35);
+    cctx.stroke();
+
+    cctx.fillStyle = '#4cd2ff';
+    cctx.shadowColor = '#4cd2ff';
+    cctx.shadowBlur = 10;
+    cctx.beginPath();
+    cctx.arc(mageX + 33, mageY - 37, 5, 0, Math.PI * 2);
+    cctx.fill();
+    cctx.shadowBlur = 0;
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    9. SMART TARGET LOCK & INPUT SYSTEM                       ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+function charMatches(pressedKey, expectedChar) {
+    if (expectedChar === ' ') return pressedKey === ' ';
+    if ([';', "'", ',', '.', '/', '!', '?'].includes(expectedChar)) {
+        return pressedKey === expectedChar;
+    }
+    return pressedKey.toUpperCase() === expectedChar.toUpperCase();
+}
+
+function togglePause() {
+    if (gameState !== 'playing') return;
+
+    if (!isPaused) {
+        isPaused = true;
+        pauseStartTime = Date.now();
+        pauseModal.classList.add('active');
+    } else {
+        resumeGame();
+    }
+}
+
+function resumeGame() {
+    if (!isPaused) return;
+    isPaused = false;
+    const pausedDuration = Date.now() - pauseStartTime;
+    stageStartTime += pausedDuration;
+    pauseModal.classList.remove('active');
+}
+
+function returnToLobby() {
+    isPaused = false;
+    pauseModal.classList.remove('active');
+    demoStagesModal.classList.remove('active');
+    document.getElementById('stage-clear-modal').classList.remove('active');
+    gameState = 'title';
+    lockedMonster = null;
+    monsters = [];
+    magicSpells = [];
+    particles = [];
+    updateInstructionBanner();
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' || e.code === 'Escape') {
+        if (demoStagesModal.classList.contains('active')) {
+            demoStagesModal.classList.remove('active');
+            return;
+        }
+        if (gameState === 'playing') {
+            togglePause();
+            return;
+        }
+    }
+
+    if (isPaused) return;
+
+    if (e.code === 'Space') {
+        e.preventDefault();
+    }
+
+    if (gameState === 'title' || gameState === 'gameover') {
+        if (e.code === 'Space') {
+            startStage(1);
+        }
+        return;
+    }
+
+    if (gameState !== 'playing') return;
+
+    const key = e.key;
+    if (key.length !== 1) return;
+
+    if (lockedMonster) {
+        const expectedChar = lockedMonster.word[lockedMonster.typed];
+        if (charMatches(key, expectedChar)) {
+            handleHitSuccess();
+        } else {
+            handleHitWrong();
+        }
+        return;
+    }
+
+    const eligibleMonsters = monsters.filter(m => m.alive && m.deathAnim <= 0 && charMatches(key, m.word[0]));
+    if (eligibleMonsters.length > 0) {
+        eligibleMonsters.sort((a, b) => a.x - b.x);
+        lockedMonster = eligibleMonsters[0];
+        handleHitSuccess();
+    } else {
+        handleHitWrong();
+    }
+});
+
+function handleHitSuccess() {
+    if (!lockedMonster) return;
+
+    lockedMonster.typed++;
+    lockedMonster.hitFlash = 0.12;
+    correctKeystrokes++;
+    currentCombo++;
+    if (currentCombo > maxCombo) maxCombo = currentCombo;
+
+    const staffX = 145 + 34;
+    const staffY = canvasH / 2 - 44;
+    magicSpells.push(new MuchaSpell(staffX, staffY, lockedMonster.x, lockedMonster.y));
+
+    if (lockedMonster.typed >= lockedMonster.word.length) {
+        spellsCast++;
+        stageKills++;
+        score += lockedMonster.word.length * 15 + (currentCombo * 5);
+        updateHUD();
+
+        lockedMonster.deathAnim = 0.4;
+        createParticleBurst(lockedMonster.x, lockedMonster.y, '#e8c97e', 22);
+        createParticleBurst(lockedMonster.x, lockedMonster.y, '#b75e54', 16);
+
+        lockedMonster = null;
+
+        if (stageKills >= stageTargetKills) {
+            setTimeout(triggerStageClear, 600);
+        }
+    }
+
+    updateInstructionBanner();
+    updateHUD();
+}
+
+function handleHitWrong() {
+    typoCount++;
+    currentCombo = 0;
+    screenShake = 0.08;
+    updateHUD();
+}
+
+function startStage(stageNumber) {
+    currentStage = stageNumber;
+    const cfg = getStageConfig(currentStage);
+    stageTargetKills = cfg.targetKills;
+    stageKills = 0;
+    stageStartTime = Date.now();
+    isPaused = false;
+    pauseModal.classList.remove('active');
+    demoStagesModal.classList.remove('active');
+
+    correctKeystrokes = 0;
+    typoCount = 0;
+    spellsCast = 0;
+    currentCombo = 0;
+    maxCombo = 0;
+
+    playerHp = MAX_HP;
+    monsters = [];
+    magicSpells = [];
+    particles = [];
+    lockedMonster = null;
+    spawnTimer = 0.5;
+    screenShake = 0;
+    gameState = 'playing';
+
+    document.getElementById('stage-clear-modal').classList.remove('active');
+    updateHUD();
+    updateInstructionBanner();
+}
+
+function updateHUD() {
+    const cfg = getStageConfig(currentStage);
+    document.getElementById('hud-stage-name').textContent = `${cfg.titleEn} (${cfg.titleZh})`;
+    document.getElementById('hud-stage-progress').textContent = `${stageKills} / ${stageTargetKills}`;
+    document.getElementById('hud-score').textContent = score;
+    document.getElementById('hud-combo').textContent = currentCombo;
+    document.getElementById('hud-gold').textContent = `${totalGold}g`;
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    10. DEMO STAGE SELECTOR INITIALIZATION                    ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+function openDemoStagesModal() {
+    const container = document.getElementById('stage-nodes-container');
+    container.innerHTML = '';
+
+    STAGE_CONFIGS.forEach((cfg) => {
+        const item = document.createElement('div');
+        item.className = 'stage-node-item';
+        item.innerHTML = `
+            <div class="node-title-row">
+                <span class="node-title">${cfg.titleEn} · ${cfg.titleZh}</span>
+                <span class="node-badge">目標 ${cfg.targetKills} 隻</span>
+            </div>
+            <div class="node-desc">${cfg.desc}</div>
+        `;
+        item.addEventListener('click', () => {
+            startStage(cfg.stage);
+        });
+        container.appendChild(item);
+    });
+
+    demoStagesModal.classList.add('active');
+}
+
+document.getElementById('btn-close-stage-selector').addEventListener('click', () => {
+    demoStagesModal.classList.remove('active');
+});
+
+// Demo Skip Button click listener
+document.getElementById('demo-skip-btn').addEventListener('click', () => {
+    triggerDemoStageSkip();
+});
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    11. KEYBOARD GUIDE & MUCHALINE HANDS                      ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+const keyDivMap = {};
+
+function initKeyboardDOM() {
+    const grid = document.getElementById('keyboard-grid');
+    grid.innerHTML = '';
+
+    KB_LAYOUT.forEach(row => {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'kb-row';
+        if (row.offset > 0) {
+            const spacer = document.createElement('div');
+            spacer.style.width = (row.offset * 35) + 'px';
+            rowDiv.appendChild(spacer);
+        }
+
+        row.keys.forEach(k => {
+            const keyDiv = document.createElement('div');
+            keyDiv.className = 'kb-key';
+            keyDiv.textContent = k;
+            keyDiv.dataset.key = k;
+
+            const finger = KEY_MAPPING[k] || 'th';
+            const fInfo = FINGER_INFO[finger];
+            keyDiv.style.backgroundColor = fInfo.keyBg;
+            keyDiv.style.borderColor = fInfo.color;
+
+            keyDivMap[k] = keyDiv;
+            rowDiv.appendChild(keyDiv);
+        });
+        grid.appendChild(rowDiv);
+    });
+
+    const spaceRow = document.createElement('div');
+    spaceRow.className = 'kb-row';
+    const spaceKey = document.createElement('div');
+    spaceKey.className = 'kb-key space-bar';
+    spaceKey.textContent = 'SPACE 空白鍵';
+    spaceKey.dataset.key = ' ';
+    keyDivMap[' '] = spaceKey;
+    spaceRow.appendChild(spaceKey);
+    grid.appendChild(spaceRow);
+}
+
+function updateInstructionBanner() {
+    const banner = document.getElementById('instruction-banner');
+    const cfg = getStageConfig(currentStage);
+
+    if (gameState === 'title') {
+        banner.innerHTML = `按下 <span class="key-tag">SPACE</span> 空白鍵 踏入奇幻之森，或點擊【進度節點】快速選關`;
+        return;
+    }
+    if (gameState === 'gameover') {
+        banner.innerHTML = `按下 <span class="key-tag">SPACE</span> 空白鍵 重新出發`;
+        return;
+    }
+    if (gameState === 'stageclear') {
+        banner.innerHTML = `✦ 戰役大獲全勝！請檢視詠唱結算 ✦`;
+        return;
+    }
+
+    if (lockedMonster) {
+        const nextChar = lockedMonster.word[lockedMonster.typed];
+        const displayChar = (nextChar === ' ') ? 'SPACE' : nextChar;
+        const finger = KEY_MAPPING[nextChar.toUpperCase()] || KEY_MAPPING[nextChar];
+        const fName = finger ? FINGER_INFO[finger].name : '';
+        banner.innerHTML = `<span class="lock-indicator">🔒 智慧鎖定:</span> [<span class="target-word">${lockedMonster.word}</span>] ➜ 請按 <span class="key-tag">${displayChar}</span> (${fName})`;
+    } else {
+        if (cfg.type === 'single_key') {
+            banner.innerHTML = `單鍵速擊階段 ➜ 請直接按下魔物身上的對應按鍵進行一擊淨化！`;
+        } else {
+            banner.innerHTML = `智慧鎖定待命中 ➜ 請輸入目標單詞的第一個字元以鎖定攻擊！`;
+        }
+    }
+}
+
+function updateKeyHighlights() {
+    Object.values(keyDivMap).forEach(el => el.classList.remove('active-key'));
+
+    if (gameState !== 'playing' || isPaused) {
+        if (keyDivMap[' ']) keyDivMap[' '].classList.add('active-key');
+        return;
+    }
+
+    if (lockedMonster) {
+        const nextChar = lockedMonster.word[lockedMonster.typed];
+        const lookup = nextChar.toUpperCase();
+        if (keyDivMap[nextChar]) {
+            keyDivMap[nextChar].classList.add('active-key');
+        } else if (keyDivMap[lookup]) {
+            keyDivMap[lookup].classList.add('active-key');
+        }
+    }
+}
+
+function drawMuchaHandsVisualizer(time) {
+    const w = handsCanvas.width / dpr;
+    const h = handsCanvas.height / dpr;
+    handsCtx.clearRect(0, 0, w, h);
+
+    let activeFingerCode = null;
+    if (gameState === 'playing' && lockedMonster && !isPaused) {
+        const nextChar = lockedMonster.word[lockedMonster.typed];
+        activeFingerCode = KEY_MAPPING[nextChar.toUpperCase()] || KEY_MAPPING[nextChar] || null;
+    } else if (gameState !== 'playing') {
+        activeFingerCode = 'th';
+    }
+
+    drawSingleMuchaHand(handsCtx, w * 0.28, h * 0.48, false, activeFingerCode, time);
+    drawSingleMuchaHand(handsCtx, w * 0.72, h * 0.48, true, activeFingerCode, time);
+}
+
+function drawSingleMuchaHand(ctx, cx, cy, isRight, activeCode, time) {
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    const fingers = isRight ? [
+        { dx: -38, dy: -12, h: 42, code: 'ri' },
+        { dx: -13, dy: -20, h: 48, code: 'rm' },
+        { dx: 12,  dy: -14, h: 44, code: 'rr' },
+        { dx: 36,  dy: -4,  h: 36, code: 'rp' },
+    ] : [
+        { dx: -36, dy: -4,  h: 36, code: 'lp' },
+        { dx: -12, dy: -14, h: 44, code: 'lr' },
+        { dx: 13,  dy: -20, h: 48, code: 'lm' },
+        { dx: 38,  dy: -12, h: 42, code: 'li' },
+    ];
+
+    ctx.fillStyle = 'rgba(235, 220, 205, 0.22)';
+    ctx.strokeStyle = 'rgba(197, 155, 76, 0.45)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.ellipse(0, 18, 52, 28, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    fingers.forEach(f => {
+        const isActive = (f.code === activeCode);
+        const fInfo = FINGER_INFO[f.code];
+
+        ctx.save();
+        ctx.translate(f.dx, f.dy);
+
+        const alpha = isActive ? (0.65 + Math.sin(time * 6) * 0.2) : 0.25;
+        ctx.fillStyle = fInfo.color + Math.floor(alpha * 255).toString(16).padStart(2, '0');
+
+        ctx.beginPath();
+        ctx.roundRect(-9, -f.h, 18, f.h + 8, 8);
+        ctx.fill();
+
+        ctx.strokeStyle = isActive ? '#ffd777' : 'rgba(85, 55, 35, 0.5)';
+        ctx.lineWidth = isActive ? 2.2 : 1.2;
+        if (isActive) {
+            ctx.shadowColor = '#d4af37';
+            ctx.shadowBlur = 10;
+        }
+        ctx.stroke();
+
+        ctx.strokeStyle = isActive ? '#ffffff' : 'rgba(197, 155, 76, 0.6)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(0, -f.h + 7, 5, Math.PI * 0.15, Math.PI * 0.85);
+        ctx.stroke();
+
+        ctx.restore();
+    });
+
+    ctx.save();
+    const thumbX = isRight ? -48 : 48;
+    const thumbAngle = isRight ? -0.45 : 0.45;
+    ctx.translate(thumbX, 10);
+    ctx.rotate(thumbAngle);
+
+    const isThumbActive = (activeCode === 'th');
+    const tAlpha = isThumbActive ? 0.65 : 0.25;
+    ctx.fillStyle = FINGER_INFO['th'].color + Math.floor(tAlpha * 255).toString(16).padStart(2, '0');
+    ctx.beginPath();
+    ctx.roundRect(-8, -26, 16, 32, 7);
+    ctx.fill();
+
+    ctx.strokeStyle = isThumbActive ? '#ffd777' : 'rgba(85, 55, 35, 0.5)';
+    ctx.lineWidth = isThumbActive ? 2.2 : 1.2;
+    if (isThumbActive) {
+        ctx.shadowColor = '#d4af37';
+        ctx.shadowBlur = 10;
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.fillStyle = 'rgba(215, 185, 155, 0.7)';
+    ctx.font = '600 11px "Noto Serif TC", serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(isRight ? '右手 (Right)' : '左手 (Left)', 0, 45);
+
+    ctx.restore();
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    12. MAIN ANIMATION & GAME LOOP                            ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+function mainLoop(timestamp) {
+    if (!lastTime) lastTime = timestamp;
+    const dt = Math.min((timestamp - lastTime) / 1000, 0.05);
+    lastTime = timestamp;
+    const time = timestamp / 1000;
+
+    if (gameState === 'playing' && !isPaused) {
+        const cfg = getStageConfig(currentStage);
+        spawnTimer -= dt;
+        if (spawnTimer <= 0 && monsters.length < 5 && (stageKills + monsters.length < stageTargetKills + 2)) {
+            monsters.push(new MuchaMonster());
+            spawnTimer = cfg.spawnInterval;
+        }
+
+        monsters.forEach(m => m.update(dt));
+        monsters = monsters.filter(m => m.alive);
+
+        if (lockedMonster && !lockedMonster.alive) {
+            lockedMonster = null;
+            updateInstructionBanner();
+        }
+
+        magicSpells.forEach(s => s.update(dt));
+        magicSpells = magicSpells.filter(s => s.alive);
+
+        if (playerHp <= 0) {
+            gameState = 'gameover';
+            lockedMonster = null;
+            updateInstructionBanner();
+        }
+    }
+
+    if (!isPaused) {
+        particles.forEach(p => p.update(dt));
+        particles = particles.filter(p => p.alive);
+        if (screenShake > 0) screenShake -= dt;
+    }
+
+    ctx.save();
+    if (screenShake > 0 && !isPaused) {
+        const sx = (Math.random() - 0.5) * screenShake * 16;
+        const sy = (Math.random() - 0.5) * screenShake * 16;
+        ctx.translate(sx, sy);
+    }
+
+    drawMuchaBackground(ctx, time);
+    drawMuchaPlayer(ctx, time);
+    monsters.forEach(m => m.draw(ctx, time));
+    magicSpells.forEach(s => s.draw(ctx));
+    particles.forEach(p => p.draw(ctx));
+
+    ctx.restore();
+
+    if (gameState === 'title') {
+        drawTitleOverlay(ctx, time);
+    } else if (gameState === 'gameover') {
+        drawGameOverOverlay(ctx, time);
+    }
+
+    // Toggle Skip button display only while playing
+    const skipBtn = document.getElementById('demo-skip-btn');
+    if (gameState === 'playing' && !isPaused) {
+        skipBtn.style.display = 'flex';
+    } else {
+        skipBtn.style.display = 'none';
+    }
+
+    updateKeyHighlights();
+    drawMuchaHandsVisualizer(time);
+
+    requestAnimationFrame(mainLoop);
+}
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    13. UI SETTINGS & MODAL BUTTON HANDLERS                   ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+const btnSettings = document.getElementById('btn-settings');
+const settingsModal = document.getElementById('settings-modal');
+const chkGuide = document.getElementById('chk-guide');
+const guideContainer = document.getElementById('guide-container');
+
+btnSettings.addEventListener('click', (e) => {
+    e.stopPropagation();
+    settingsModal.classList.toggle('show');
+});
+
+document.addEventListener('click', (e) => {
+    if (!settingsModal.contains(e.target) && e.target !== btnSettings) {
+        settingsModal.classList.remove('show');
+    }
+});
+
+chkGuide.addEventListener('change', (e) => {
+    if (e.target.checked) {
+        guideContainer.classList.remove('collapsed');
+    } else {
+        guideContainer.classList.add('collapsed');
+    }
+    setTimeout(resizeCanvases, 360);
+});
+
+// ESC Pause Handlers
+document.getElementById('btn-pause-hud').addEventListener('click', togglePause);
+document.getElementById('btn-resume-game').addEventListener('click', resumeGame);
+document.getElementById('btn-return-lobby').addEventListener('click', returnToLobby);
+
+// Settlement Modal Action Buttons
+document.getElementById('btn-replay').addEventListener('click', () => {
+    startStage(currentStage);
+});
+
+document.getElementById('btn-next-stage').addEventListener('click', () => {
+    const nextStage = currentStage >= STAGE_CONFIGS.length ? 1 : currentStage + 1;
+    startStage(nextStage);
+});
+
+// ╔══════════════════════════════════════════════════════════════════════════════╗
+// ║                    14. SYSTEM INITIALIZATION                                 ║
+// ╚══════════════════════════════════════════════════════════════════════════════╝
+
+function init() {
+    initKeyboardDOM();
+    resizeCanvases();
+    updateInstructionBanner();
+    updateHUD();
+    requestAnimationFrame(mainLoop);
+}
+
+init();
+</script>
+</body>
+</html>
